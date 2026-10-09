@@ -174,14 +174,14 @@ pnpm dlx github:bangmim/claude-harness update
 
 ## Fork 가이드
 
-본인 블로그·톤·스택에 맞추려면 리포를 fork한 뒤 다음을 수정하세요:
+> **블로그 스킬은 Fork 없이 커스터마이즈 가능합니다.** 설치 후 `~/.claude/skills/writing-tistory-blog/config.md`에 자기 블로그 URL·카테고리·톤 예시를 채우면 됩니다. 아래 Fork 가이드는 **브랜치 모델이나 `/cnp` 흐름 등 하네스 자체 로직을 바꾸고 싶을 때**만 필요합니다.
 
-1. **`templates/user/skills/writing-tistory-blog/SKILL.md`** — 본인 블로그 URL, 카테고리, 톤 가이드로 교체.
-2. **`templates/user/commands/blog.md`, `commands/블로그.md`** — 블로그 폴더 경로 등 교체.
-3. **`templates/project/CLAUDE.md`의 `ch:managed` 영역** — 브랜치 모델이 다르면 수정.
-4. **`templates/project/.claude/skills/cnp/SKILL.md`** — `/cnp` 세부 흐름(머지 규칙 등) 조정.
-5. `pnpm build` 후 `dist/` 포함해서 커밋 + push.
-6. 설치 명령 교체:
+본인 스택에 맞추려면 리포를 fork한 뒤 다음을 수정하세요:
+
+1. **`templates/project/CLAUDE.md`의 `ch:managed` 영역** — 브랜치 모델이 다르면 수정.
+2. **`templates/project/.claude/skills/cnp/SKILL.md`** — `/cnp` 세부 흐름(머지 규칙 등) 조정.
+3. `pnpm build` 후 `dist/` 포함해서 커밋 + push.
+4. 설치 명령 교체:
 
    ```bash
    pnpm dlx github:your-username/claude-harness init
