@@ -1,0 +1,6 @@
+node_modules/
+.backup/
+*.log
+.DS_Store
+# dist/ 는 커밋 (pnpm dlx가 build 안 돌림)
+.superpowers/
