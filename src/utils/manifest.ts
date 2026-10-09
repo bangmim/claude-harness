@@ -24,7 +24,7 @@ export function parseManifest(raw: unknown): Manifest {
 }
 
 export function loadManifest(packageRoot?: string): Manifest {
-  const root = packageRoot ?? path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+  const root = packageRoot ?? path.dirname(path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url)))));
   const raw = JSON.parse(readFileSync(path.join(root, "manifest.json"), "utf8"));
   return parseManifest(raw);
 }

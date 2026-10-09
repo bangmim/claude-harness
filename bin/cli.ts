@@ -51,7 +51,7 @@ program.parseAsync(process.argv).catch((err) => {
 });
 
 function packageRoot(): string {
-  return path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+  return path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
 }
 
 async function prompt(question: string): Promise<boolean> {
