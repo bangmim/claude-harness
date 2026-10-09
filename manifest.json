@@ -1,0 +1,27 @@
+{
+  "user": [
+    { "source": "templates/user/commands/blog.md",
+      "target": "~/.claude/commands/blog.md",
+      "mode": "whole" },
+    { "source": "templates/user/commands/블로그.md",
+      "target": "~/.claude/commands/블로그.md",
+      "mode": "whole" },
+    { "source": "templates/user/skills/writing-tistory-blog",
+      "target": "~/.claude/skills/writing-tistory-blog",
+      "mode": "whole",
+      "recursive": true }
+  ],
+  "project": [
+    { "source": "templates/project/CLAUDE.md",
+      "target": "./CLAUDE.md",
+      "mode": "markers" },
+    { "source": "templates/project/PLAN.md",
+      "target": "./PLAN.md",
+      "mode": "init-only",
+      "substitute": { "{{PROJECT_NAME}}": "basename(cwd)" } },
+    { "source": "templates/project/.claude/skills/cnp",
+      "target": "./.claude/skills/cnp",
+      "mode": "whole",
+      "recursive": true }
+  ]
+}
