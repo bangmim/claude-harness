@@ -59,10 +59,6 @@ export async function runInit(opts: RunInitOpts): Promise<void> {
     opts.log(`💾 백업 위치: ${projReport.backupDir ?? userReport.backupDir}`);
     opts.log(`💡 오래된 백업은 수동 삭제 가능: rm -rf .backup/<old-timestamp>/`);
   }
-  opts.log("\n다음 단계:");
-  opts.log("  1. PLAN.md 열어서 작업 범위 적기");
-  opts.log("  2. git init && git checkout -b feat/<...>");
-  opts.log("  3. Claude Code 열어서 작업 시작");
 }
 
 async function envCheck(opts: RunInitOpts): Promise<void> {
