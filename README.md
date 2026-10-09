@@ -7,7 +7,7 @@ Claude Code 신규 프로젝트에 CLAUDE.md + /cnp 스킬 + 브랜치 규격 �
 
 ```bash
 # 아무 폴더에서
-pnpm dlx github:akiyun10/claude-harness init
+pnpm dlx github:bangmim/claude-harness init
 ```
 
 이 한 줄이 다음을 설치합니다:
@@ -35,7 +35,7 @@ pnpm dlx github:akiyun10/claude-harness init
 
 ### `init` — 신규 설치
 ```bash
-pnpm dlx github:akiyun10/claude-harness init [flags]
+pnpm dlx github:bangmim/claude-harness init [flags]
 ```
 
 | 플래그 | 동작 |
@@ -46,7 +46,7 @@ pnpm dlx github:akiyun10/claude-harness init [flags]
 
 ### `update` — 하네스 영역만 재설치
 ```bash
-pnpm dlx github:akiyun10/claude-harness update [flags]
+pnpm dlx github:bangmim/claude-harness update [flags]
 ```
 
 | 플래그 | 동작 |
@@ -113,7 +113,7 @@ rm -rf ./.backup/<old-timestamp>/
 최신 리포 반영이 안 되는 것 같으면:
 ```bash
 pnpm store prune
-pnpm dlx github:akiyun10/claude-harness update
+pnpm dlx github:bangmim/claude-harness update
 ```
 
 ## 라이선스
