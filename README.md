@@ -56,7 +56,18 @@ pnpm dlx github:bangmim/claude-harness init
 | 파일 | 설명 |
 |---|---|
 | `commands/blog.md`, `commands/블로그.md` | 세션 작업물을 티스토리 블로그 포스트로 변환해달라고 요청하는 슬래시 커맨드. |
-| `skills/writing-tistory-blog/SKILL.md` | mifine.tistory.com 전용 블로그 작성 가이드(톤·구조·발행 흐름). **Fork 시 본인 블로그에 맞게 교체 필요.** |
+| `skills/writing-tistory-blog/SKILL.md` | 범용 티스토리 블로그 작성 가이드(톤·구조·발행 흐름). 블로그 URL·카테고리·톤 예시 같은 **개인 설정은 같은 폴더의 `config.md`에서 읽어옴**. |
+| `skills/writing-tistory-blog/config.example.md` | 개인 설정 템플릿. 설치 후 `config.md`로 복사해 본인 블로그 정보를 채워야 스킬이 동작한다. |
+
+#### 설치 후 블로그 스킬 1회 세팅
+
+```bash
+cd ~/.claude/skills/writing-tistory-blog
+cp config.example.md config.md
+# config.md 열어서 {{YOUR_TISTORY_HANDLE}}, 카테고리, 톤 예시 등 자기 값으로 채움
+```
+
+`config.md`는 로컬 전용이며 claude-harness 레포에서는 `.gitignore`로 제외된다. 하네스를 fork해도 본인 `config.md`는 커밋되지 않는다.
 
 ### 프로젝트 (`./`) — 매 프로젝트마다
 

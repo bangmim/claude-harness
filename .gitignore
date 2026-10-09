@@ -4,3 +4,9 @@ node_modules/
 .DS_Store
 # dist/ 는 커밋 (pnpm dlx가 build 안 돌림)
 .superpowers/
+
+# Per-skill local configuration — users create these from config.example.md
+# after installation. Never commit personal settings.
+templates/user/skills/*/config.md
+templates/user/skills/*/config.local.md
+templates/user/skills/*/.secrets.md
