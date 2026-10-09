@@ -65,6 +65,7 @@ pnpm dlx github:bangmim/claude-harness init
 | `CLAUDE.md` | Claude가 작업 시작 전 읽는 규칙. PLAN.md 범위 안에서만 작업하기, 불확실하면 질문하기, 브랜치 네이밍 규격(`^(feat\|fix\|chore\|test\|docs\|refactor)/[a-z0-9-]+$`), `/cnp` 외 git 명령 금지 등. |
 | `PLAN.md` | 사용자가 작업 전 채우는 플랜(목표 / 범위 / 미확정 / 결정 기록). `{{PROJECT_NAME}}`은 폴더명으로 자동 치환. 한 번 생성 후에는 하네스가 절대 건드리지 않습니다. |
 | `.claude/skills/cnp/SKILL.md` | `/cnp` 명령어 구현. 커밋→현재 브랜치 origin 푸시. `/cnp --merge`면 develop 머지+작업 브랜치 삭제까지. 브랜치명 regex·워크트리 확인·main 직접 커밋 금지 등 안전장치 포함. |
+| `.claude/skills/audit/SKILL.md` | `/audit` 명령어. 현재 프로젝트가 CLAUDE.md 규칙(브랜치 네이밍, PLAN.md 완성도, 마커 무결성, `.gitignore` 상태)을 지키는지 점검하고 수정 제안. `/audit --fix` 는 승인된 수정만 적용. 세션 시작 시 PLAN.md가 비어있으면 Claude가 자동으로 "먼저 /audit 돌릴까요?" 제안. |
 | `.gitignore` | `.backup/` 라인을 중복 없이 추가. 기존 라인은 보존. |
 
 ## 사용

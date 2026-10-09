@@ -22,6 +22,10 @@
     { "source": "templates/project/.claude/skills/cnp",
       "target": "./.claude/skills/cnp",
       "mode": "whole",
+      "recursive": true },
+    { "source": "templates/project/.claude/skills/audit",
+      "target": "./.claude/skills/audit",
+      "mode": "whole",
       "recursive": true }
   ]
 }
