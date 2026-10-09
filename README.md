@@ -225,4 +225,4 @@ pnpm dlx github:bangmim/claude-harness update
 
 ## License
 
-MIT © bangmim
+MIT © 박미현 (bangmim). 전문은 [LICENSE](./LICENSE) 참조.
