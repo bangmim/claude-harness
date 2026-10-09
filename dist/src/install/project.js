@@ -1,7 +1,8 @@
 import path from "node:path";
 import { mkdir, copyFile, readdir, stat } from "node:fs/promises";
-import { compareFiles } from "../utils/diff.js";
+import { compareFiles, formatDiffPreview } from "../utils/diff.js";
 import { backupFile, timestampString, readFileUtf8, writeFileUtf8 } from "../utils/copy.js";
+import { detectMarkers, extractManagedSection, replaceManagedSection } from "../utils/markers.js";
 export async function analyzeProjectState(manifest, opts) {
     const results = [];
     for (const entry of manifest.project) {
@@ -50,6 +51,30 @@ export async function installProject(statuses, opts) {
             continue;
         }
         if (state === "DIFFERENT") {
+            if (entry.mode === "markers") {
+                const dstContent = await readFileUtf8(dstAbs);
+                const markerState = detectMarkers(dstContent);
+                if (markerState === "both" || markerState === "managed-only") {
+                    const srcContent = await readFileUtf8(srcAbs);
+                    const newBody = extractManagedSection(srcContent);
+                    if (newBody !== null) {
+                        const updated = replaceManagedSection(dstContent, newBody);
+                        if (updated === dstContent) {
+                            report.skipped.push(dstAbs);
+                            continue;
+                        }
+                        if (!opts.dryRun) {
+                            await backupFile(dstAbs, backupDir);
+                            await writeFileUtf8(dstAbs, updated);
+                        }
+                        report.overwritten.push(dstAbs);
+                        continue;
+                    }
+                }
+            }
+            const srcContent = await readFileUtf8(srcAbs);
+            const dstContent = await readFileUtf8(dstAbs);
+            opts.log?.(formatDiffPreview(dstContent, srcContent));
             let overwrite = opts.force;
             if (!overwrite) {
                 overwrite = await opts.prompt(`${path.relative(opts.cwd, dstAbs)} 에 로컬 버전이 있습니다. 하네스 버전으로 덮어쓸까요? (y/N)`);

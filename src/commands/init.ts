@@ -45,7 +45,8 @@ export async function runInit(opts: RunInitOpts): Promise<void> {
     force: opts.force,
     dryRun: opts.dryRun,
     prompt: opts.prompt,
-    cwd: opts.cwd
+    cwd: opts.cwd,
+    log: opts.log
   });
   reportLine(opts.log, projReport, "프로젝트");
 

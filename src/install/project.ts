@@ -1,8 +1,9 @@
 import path from "node:path";
 import { mkdir, copyFile, readdir, stat } from "node:fs/promises";
 import type { Manifest, ManifestEntry } from "../utils/manifest.js";
-import { compareFiles, FileState } from "../utils/diff.js";
+import { compareFiles, FileState, formatDiffPreview } from "../utils/diff.js";
 import { backupFile, timestampString, readFileUtf8, writeFileUtf8 } from "../utils/copy.js";
+import { detectMarkers, extractManagedSection, replaceManagedSection } from "../utils/markers.js";
 import type { InstallReport } from "./user.js";
 
 export type ProjectFileStatus = {
@@ -59,6 +60,7 @@ type InstallOpts = {
   dryRun: boolean;
   prompt: (question: string) => Promise<boolean>;
   cwd: string;
+  log?: (line: string) => void;
 };
 
 export async function installProject(statuses: ProjectFileStatus[], opts: InstallOpts): Promise<InstallReport> {
@@ -79,6 +81,32 @@ export async function installProject(statuses: ProjectFileStatus[], opts: Instal
     }
 
     if (state === "DIFFERENT") {
+      if (entry.mode === "markers") {
+        const dstContent = await readFileUtf8(dstAbs);
+        const markerState = detectMarkers(dstContent);
+        if (markerState === "both" || markerState === "managed-only") {
+          const srcContent = await readFileUtf8(srcAbs);
+          const newBody = extractManagedSection(srcContent);
+          if (newBody !== null) {
+            const updated = replaceManagedSection(dstContent, newBody);
+            if (updated === dstContent) {
+              report.skipped.push(dstAbs);
+              continue;
+            }
+            if (!opts.dryRun) {
+              await backupFile(dstAbs, backupDir);
+              await writeFileUtf8(dstAbs, updated);
+            }
+            report.overwritten.push(dstAbs);
+            continue;
+          }
+        }
+      }
+
+      const srcContent = await readFileUtf8(srcAbs);
+      const dstContent = await readFileUtf8(dstAbs);
+      opts.log?.(formatDiffPreview(dstContent, srcContent));
+
       let overwrite = opts.force;
       if (!overwrite) {
         overwrite = await opts.prompt(
