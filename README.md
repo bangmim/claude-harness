@@ -59,6 +59,12 @@ pnpm dlx github:bangmim/claude-harness init
 | `skills/writing-tistory-blog/SKILL.md` | 범용 티스토리 블로그 작성 가이드(톤·구조·발행 흐름). 블로그 URL·카테고리·톤 예시 같은 **개인 설정은 같은 폴더의 `config.md`에서 읽어옴**. |
 | `skills/writing-tistory-blog/config.example.md` | 개인 설정 템플릿. 설치 후 `config.md`로 복사해 본인 블로그 정보를 채워야 스킬이 동작한다. |
 
+#### 블로그 작성 기본 스타일
+
+프로젝트에 관계없이 담백한 평어체로 기존 글의 다음 내용을 작성합니다. 관련 발행 글과 초안을 먼저 확인하고, 증상·원인·변경 전후·검증 결과를 연결합니다. 제목 아래 HTML 주석에는 실제 블로그 카테고리 전체 경로를 기록합니다. 스타일 예문은 스킬의 `references/approved-post.md`에 포함됩니다.
+
+아이디어 뱅크는 발행하지 않는 내부 관리 문서입니다. 개인 블로그 주소·카테고리·저장 경로는 로컬 `config.md`로 유지하며 이 저장소에는 포함하지 않습니다.
+
 #### 설치 후 블로그 스킬 1회 세팅
 
 ```bash
