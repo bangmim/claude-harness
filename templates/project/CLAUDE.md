@@ -15,8 +15,8 @@
 
 ## 브랜치 구조
 - `main`: 안정판. 직접 커밋 금지.
-- `develop`: Claude의 기본 작업 base. 모든 PR과 머지는 `develop`을 향한다.
-- 작업 브랜치: `develop`에서 분기. 접두사 + kebab-case 짧은 설명.
+- `develop`: Claude의 기본 작업 base. 기본 PR 대상은 `develop`이며, main-only 저장소는 확인한 기본 브랜치를 사용한다.
+- 작업 브랜치: 확인한 통합 브랜치에서 분기. 접두사 + kebab-case 짧은 설명.
 
 ## 브랜치 네이밍 규격
 - 형식: `<type>/<kebab-case-description>`
@@ -25,18 +25,18 @@
 - 예: `feat/kakao-oauth`, `fix/notification-timezone`, `chore/firebase-setup`
 
 ## 작업 워크플로우
-- 메인 디렉토리 체크아웃은 항상 `develop` 고정.
+- 메인 디렉토리는 확인한 통합 브랜치에 둔다. 기본은 `develop`, main-only 저장소는 `main`이다.
 - 작업과 브랜치/워크트리는 1:1.
 - 사용자가 작업을 지시하면:
   1. Agent tool로 subagent를 띄운다 (`isolation: "worktree"`).
-  2. subagent는 자체 워크트리 안에서 `develop`을 base로 작업 브랜치를 분기.
+  2. subagent는 자체 워크트리 안에서 확인한 통합 브랜치를 base로 작업 브랜치를 분기.
   3. 작업이 끝나면 subagent 안에서 `/cnp` 또는 `/cnp --merge`.
-  4. 머지 완료 후 subagent 종료, 메인 세션은 `develop`에 그대로 머문다.
+  4. 머지 완료 후 subagent 종료, 메인 세션은 통합 브랜치에 그대로 머문다.
 
 ## 절대 규칙: /cnp 를 통해서만
 - Claude는 사용자가 `/cnp` 또는 `/cnp --merge`를 명시적으로 입력하기 전에는 절대로 `git commit`, `git push`, `git merge`를 실행하지 않는다.
-- `/cnp`: 커밋 → 현재 브랜치 origin에 push. 머지 없음.
-- `/cnp --merge`: `/cnp` + `develop` 머지 + `develop` push + 작업 브랜치 삭제 여부 질문.
+- `/cnp`: 검증 → 커밋 → 작업 브랜치 push → PR 생성·리뷰. 머지 없음.
+- `/cnp --merge`: 위 절차 + 검사·리뷰 확인 → PR 병합 → 통합 브랜치 동기화 → 병합된 작업 브랜치·worktree 정리.
 - 세부 동작은 `.claude/skills/cnp/SKILL.md` 참조.
 <!-- ch:managed end -->
 
@@ -47,6 +47,6 @@
 <!--
 ## 브랜치 모델 override
 - 이 프로젝트는 `main` 단일 브랜치. `develop` 없음.
-- CNP의 "develop 체크아웃·머지 단계"는 적용 안 함 (`/cnp`만 사용, `/cnp --merge` 금지).
+- CNP의 PR 대상은 `main`이며, `--merge`도 PR을 통해서만 병합한다.
 -->
 <!-- ch:user end -->

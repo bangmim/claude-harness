@@ -81,7 +81,7 @@ cp config.example.md config.md
 |---|---|
 | `CLAUDE.md` | Claude가 작업 시작 전 읽는 규칙. PLAN.md 범위 안에서만 작업하기, 불확실하면 질문하기, 브랜치 네이밍 규격(`^(feat\|fix\|chore\|test\|docs\|refactor)/[a-z0-9-]+$`), `/cnp` 외 git 명령 금지 등. |
 | `PLAN.md` | 사용자가 작업 전 채우는 플랜(목표 / 범위 / 미확정 / 결정 기록). `{{PROJECT_NAME}}`은 폴더명으로 자동 치환. 한 번 생성 후에는 하네스가 절대 건드리지 않습니다. |
-| `.claude/skills/cnp/SKILL.md` | `/cnp` 명령어 구현. 커밋→현재 브랜치 origin 푸시. `/cnp --merge`면 develop 머지+작업 브랜치 삭제까지. 브랜치명 regex·워크트리 확인·main 직접 커밋 금지 등 안전장치 포함. |
+| `.claude/skills/cnp/SKILL.md` | `/cnp` 명령어 구현. 검증→커밋→작업 브랜치 푸시→PR 생성·리뷰. `--merge`면 확인한 통합 브랜치에 PR 병합 후 정리까지. 브랜치명 regex·워크트리 확인·main 직접 커밋 금지 등 안전장치 포함. |
 | `.claude/skills/audit/SKILL.md` | `/audit` 명령어. 현재 프로젝트가 CLAUDE.md 규칙(브랜치 네이밍, PLAN.md 완성도, 마커 무결성, `.gitignore` 상태)을 지키는지 점검하고 수정 제안. `/audit --fix` 는 승인된 수정만 적용. 세션 시작 시 PLAN.md가 비어있으면 Claude가 자동으로 "먼저 /audit 돌릴까요?" 제안. |
 | `.gitignore` | `.backup/` 라인을 중복 없이 추가. 기존 라인은 보존. |
 
@@ -160,7 +160,7 @@ Claude가 PLAN.md를 함께 채우고, 작업 브랜치를 만들고, 작업을 
 <!-- ch:user start -->
 ## 브랜치 모델 override
 - 이 프로젝트는 `main` 단일 브랜치, `develop` 없음.
-- `/cnp --merge` 금지. `/cnp`만 사용.
+- CNP의 PR 대상은 `main`. `--merge`도 PR을 통해 병합.
 <!-- ch:user end -->
 ```
 
@@ -243,3 +243,27 @@ pnpm dlx github:bangmim/claude-harness update
 ## License
 
 MIT © 박미현 (bangmim). 전문은 [LICENSE](./LICENSE) 참조.
+
+## CNP의 PR 검증·리뷰
+
+CNP는 검증 후 작업 브랜치를 푸시하고 PR을 생성하거나 갱신합니다. 플래그 없는 호출은 병합하지 않으며, `--merge`는 현재 head의 검사·리뷰와 저장소 조건을 확인한 뒤 PR로 병합합니다. `develop`이 없는 main-only 저장소는 `main`을 대상으로 합니다. PR 실패는 PR에서 처리하고, 기본 브랜치 실패나 별도 추적할 후속 과제만 이슈에 기록합니다. 실패 상태에서는 병합을 보류합니다.
+
+자기 검토와 외부 리뷰는 따로 보고합니다. GitHub Actions 상시 실행이나 리뷰 서비스 연결은 이 스킬만으로 활성화되지 않습니다.
+
+## 이 저장소의 GitHub 자동 검사
+
+이 하네스 저장소 자체에는 `.github/workflows/ci.yml`이 PR·`main` push 시 타입 검사와 테스트를 실행합니다. `checks / verify`가 필수 검사 후보이며 원격 첫 실행의 실제 check 이름을 확인한 뒤 보호 규칙에 지정합니다. `main`의 CI 실패만 별도 workflow가 이슈로 등록하며, PR 실패·취소·수동 실행 실패는 이슈로 복제하지 않습니다. 반복 실패는 열린 파이프라인 이슈에 모으고 같은 실행 시도는 중복 기록하지 않습니다. 원인이 다른 실패는 확인 후 분리합니다. 성공 시 자동으로 이슈를 닫지는 않습니다.
+
+PR 검사는 읽기 권한으로 실행합니다. 이슈 작성 작업은 기본 브랜치 코드만 사용하며 PR 코드·아티팩트·로그를 실행하거나 가져오지 않습니다. 추가 API 키는 필요하지 않습니다. AI 리뷰 서비스 연결과 GitHub 브랜치 보호는 별도 설정이며 이 파일만으로 켜지지 않습니다.
+
+이 workflow들은 이 저장소 자체의 설정입니다. 하네스 `init`으로 다른 프로젝트에 복사하지 않습니다. 다른 프로젝트는 언어·패키지 관리자·테스트·배포 승인 규칙에 맞춰 별도 CI를 구성해야 합니다. 새 저장소는 템플릿으로 파일을 가져오거나 공통 reusable workflow를 호출할 수 있지만, 개인 계정의 모든 저장소에 자동 전역 적용되지는 않습니다.
+
+브랜치 보호의 적용 예정 값은 `.github/branch-protection.json`에 있습니다. `main`은 PR로만 반영하고 GitHub Actions의 `checks / verify` 검사를 필수로 요구하며, 관리자에게도 적용합니다. 1인 운영이므로 사람 승인 수는 0으로 두고 강제 push·삭제는 허용하지 않습니다. 이 JSON은 선언용이며 자동 적용되지는 않습니다. 기존 보호 규칙이 있으면 통째로 덮어쓰지 않고 확인 후 필요한 조건만 조정합니다. workflow를 원격에 반영하고 실제 검사 이름·발행 앱을 확인한 뒤 저장소 설정에 적용해야 합니다.
+
+위 자동화는 workflow가 원격에 반영된 뒤 동작합니다. 로컬 파일 작성만으로 활성화되지는 않습니다.
+
+## 두 하네스의 공통 CI
+
+설치 도구와 저장소는 분리하되, 타입 검사·테스트 단계는 `codex-harness/.github/workflows/harness-checks.yml`에서 함께 관리합니다. Codex 저장소는 같은 커밋의 로컬 workflow를, Claude 저장소는 공개 `codex-harness`의 `main` workflow를 호출합니다. checkout 대상은 호출한 저장소이므로 각각 자기 코드와 테스트를 검사합니다. 쓰기 권한이나 추가 secrets를 전달하지 않습니다.
+
+최초 반영은 공통 workflow를 가진 `codex-harness`부터 병합하고, 그 다음 `claude-harness` PR 검사를 확인해야 합니다. 그 전 Claude의 원격 검사는 공통 workflow가 없어 실행되지 않을 수 있습니다. `@main` 참조는 공통 검사 변경을 함께 받기 위한 선택입니다. 이후 재현성을 우선하면 검증한 커밋 SHA로 고정하고 갱신 PR을 별도로 운영할 수 있습니다. 브랜치 보호의 check 이름은 원격 실행 결과로 확인합니다.
